@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "djoser",
-    "debug_toolbar",
     "corsheaders",
     "adminsortable2",
     "test_app.apps.TestAppConfig",

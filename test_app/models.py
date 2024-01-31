@@ -21,7 +21,7 @@ def isSeasonValid(season):
 
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True)
-    image = models.ImageField(upload_to="media/")
+    image = models.ImageField(upload_to="jobGroup/")
     is_finished = models.BooleanField(default=False)
 
     def __str__(self):
@@ -50,7 +50,7 @@ class NewItem(models.Model):
     proto = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to="base/media/newItems", null=True, blank=True)
+    image = models.ImageField(upload_to="newItems/", null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -1,9 +1,5 @@
 from rest_framework import serializers
 from .models import *
-from decimal import Decimal
-from django.db.models import Avg, Q, Max, F
-from django.utils import timezone
-from django.utils.timesince import timesince
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -63,15 +59,14 @@ class JobGroupSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "image", "is_finished", "bundle_groups"]
 
 
-class RefStyleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RefStyle
-        fields = ["id", "name", "attribute"]
+# class RefStyleSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = RefStyle
+#         fields = ["id", "name", "attribute"]
 
 
 class OperationLibSerializer(serializers.ModelSerializer):
     bundle_group = serializers.StringRelatedField()
-    refStyle = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = OperationLib
@@ -81,7 +76,6 @@ class OperationLibSerializer(serializers.ModelSerializer):
             "name",
             "operation_code",
             "note",
-            "refStyle",
         ]
 
 
@@ -115,7 +109,7 @@ class ElementLibSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ElementLib
-        fields = ["id", "name", "operation", "variables", "note", 'my_order']
+        fields = ["id", "name", "operation", "variables", "note", "my_order"]
 
 
 class ElementSimpleSerializer(serializers.ModelSerializer):

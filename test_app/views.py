@@ -38,16 +38,10 @@ class OperationLibViewSet(ModelViewSet):
         bundle_group = self.request.query_params.get("bundle_group")
 
         if bundle_group:
-            return (
-                OperationLib.objects.select_related("bundle_group")
-                .prefetch_related("refStyle")
-                .filter(bundle_group=bundle_group)
+            return OperationLib.objects.select_related("bundle_group").filter(
+                bundle_group=bundle_group
             )
-        return (
-            OperationLib.objects.select_related("bundle_group")
-            .prefetch_related("refStyle")
-            .all()
-        )
+        return OperationLib.objects.select_related("bundle_group").all()
 
     serializer_class = OperationLibSerializer
 
@@ -63,9 +57,12 @@ class OperationListViewSet(ModelViewSet):
             return (
                 OperationListItem.objects.select_related("list__created_by")
                 .select_related("operations__bundle_group")
-                .prefetch_related("operations__refStyle")
+                .prefetch_related("elementlistitem_set__options")
+                .prefetch_related(
+                    "elementlistitem_set__elements__timestudy_set__elements"
+                )
                 .filter(
-                    list=listId,
+                    list__created_by=self.request.user,
                     operations__bundle_group=bundle_group,
                 )
             )
@@ -73,7 +70,8 @@ class OperationListViewSet(ModelViewSet):
         return (
             OperationListItem.objects.select_related("list__created_by")
             .select_related("operations__bundle_group")
-            .prefetch_related("operations__refStyle")
+            .prefetch_related("elementlistitem_set__options")
+            .prefetch_related("elementlistitem_set__elements__timestudy_set__elements")
             .filter(list__created_by=self.request.user)
         )
 
@@ -86,7 +84,6 @@ class OperationListViewSet(ModelViewSet):
 class ElementLibViewSet(ModelViewSet):
     def get_queryset(self):
         operationId = self.request.query_params.get("operation_id")
-        print("OPERATION ID: ", operationId)
         if operationId:
             return (
                 ElementLib.objects.select_related("operation__bundle_group")
@@ -117,6 +114,7 @@ class ElementListItemViewSet(ModelViewSet):
                     "elements__operation",
                 )
                 .prefetch_related("options")
+                .prefetch_related("elements__timestudy_set")
                 .filter(listItem=operationList)
             )
 
@@ -125,6 +123,7 @@ class ElementListItemViewSet(ModelViewSet):
                 "listItem__list__item", "listItem__operations", "elements__operation"
             )
             .prefetch_related("options")
+            .prefetch_related("elements__timestudy_set")
             .filter(listItem__list__created_by=self.request.user)
         )
 

@@ -6,10 +6,10 @@ import re
 
 
 def isItemNameValid(itemName):
-    pattern = r"^\d{4}[a-zA-Z]{1,7}$"
+    pattern = r"^\d{4}[A-Z]{1,7}$"
     if not re.match(pattern, itemName):
         raise ValidationError(
-            "The item name must start with 4 digits and followed by 1-7 characters"
+            "Item name must start with 4 digits followed by 1-7 upper case letters"
         )
 
 
@@ -21,7 +21,7 @@ def isSeasonValid(season):
 
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True)
-    image = models.ImageField(upload_to="jobGroup/")
+    image = models.ImageField(upload_to="media/")
     is_finished = models.BooleanField(default=False)
 
     def __str__(self):
@@ -50,7 +50,7 @@ class NewItem(models.Model):
     proto = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to="newItems/", null=True, blank=True)
+    image = models.ImageField(upload_to="base/media/newItems", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -85,24 +85,11 @@ class Variables(models.Model):
         return self.name
 
 
-class RefStyle(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    attribute = models.ManyToManyField(Option)
-
-    def __str__(self):
-        return self.name
-
-
 class OperationLib(models.Model):
     bundle_group = models.ForeignKey(BundleGroup, on_delete=models.PROTECT)
     name = models.CharField(max_length=200)
     operation_code = models.IntegerField()
     note = models.TextField(max_length=1500, null=True, blank=True)
-    refStyle = models.ManyToManyField(
-        RefStyle,
-        blank=True,
-        verbose_name="Ref Style",
-    )
 
     def __str__(self):
         return f"{self.name}"
@@ -147,12 +134,6 @@ class ElementListItem(models.Model):
         return f"{self.listItem.list.item.name} - {self.elements.name}"
 
 
-class TimeStudyRef(models.Model):
-    elements = models.ForeignKey(ElementLib, on_delete=models.PROTECT)
-    refStyle = models.ForeignKey(RefStyle, on_delete=models.PROTECT)
-    time = models.FloatField(null=True)
-
-
 class TimeStudy(models.Model):
     elements = models.ForeignKey(ElementLib, on_delete=models.CASCADE)
     options = models.ManyToManyField(Option, blank=True)
@@ -160,3 +141,16 @@ class TimeStudy(models.Model):
 
     def __str__(self):
         return f"{self.elements.name}"
+
+
+# class RefStyle(models.Model):
+#     name = models.CharField(max_length=200, unique=True)
+#     attribute = models.ManyToManyField(Option)
+
+#     def __str__(self):
+#         return self.name
+
+# class TimeStudyRef(models.Model):
+#     elements = models.ForeignKey(ElementLib, on_delete=models.PROTECT)
+#     refStyle = models.ForeignKey(RefStyle, on_delete=models.PROTECT)
+#     time = models.FloatField(null=True)

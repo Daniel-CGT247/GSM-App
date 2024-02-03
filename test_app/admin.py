@@ -207,6 +207,15 @@ class TimeStudyAdmin(admin.ModelAdmin):
         return timestudy.elements.operation.name
 
 
-# for model_name, model in app.models.items():
-#     if model_name != "elementlib":
-#         admin.site.register(model)
+try:
+    for model_name, model in app.models.items():
+        if (
+            (model_name == "timestudy_options")
+            | (model_name == "elementlistitem_options")
+            | (model_name == "elementlib_variables")
+            | (model_name == "variables_options")
+        ):
+            admin.site.register(model)
+except:
+    print("Already registered: ", model_name)
+#

@@ -62,7 +62,7 @@ class OperationListViewSet(ModelViewSet):
                     "elementlistitem_set__elements__timestudy_set__elements"
                 )
                 .filter(
-                    list__created_by=self.request.user,
+                    list=listId,
                     operations__bundle_group=bundle_group,
                 )
             )
@@ -141,4 +141,3 @@ class TimeStudyViewSet(ModelViewSet):
         .all()
     )
     serializer_class = TimeStudySerializer
-

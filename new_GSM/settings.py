@@ -106,7 +106,8 @@ DATABASES = {
         "USER": "postgres.lyuqhgdwngpcvdalryel",
         "PASSWORD": "GSM_CGT_247",
         "HOST": "aws-0-us-west-1.pooler.supabase.com",
-        "PORT": 6543
+        "PORT": 6543,
+        "DISABLE_SERVER_SIDE_CURSORS": True,
         # "NAME": os.environ.get("DB_NAME"),
         # "USER": os.environ.get("DB_USER"),
         # "PASSWORD": os.environ.get("DB_PASSWORD"),
@@ -152,8 +153,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 # STATICFILES_URL = [BASE_DIR / "static"]
-STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -6,6 +6,7 @@ from .models import *
 from .serializers import *
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class CollectionViewSet(ModelViewSet):
@@ -48,6 +49,7 @@ class OperationLibViewSet(ModelViewSet):
 
 class OperationListViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
 
     def get_queryset(self):
         bundle_group = self.request.query_params.get("bundle_group")

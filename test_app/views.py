@@ -50,6 +50,7 @@ class OperationLibViewSet(ModelViewSet):
 class OperationListViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["list_id", "operations__bundle_group"]
 
     def get_queryset(self):
         bundle_group = self.request.query_params.get("bundle_group")

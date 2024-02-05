@@ -56,7 +56,7 @@ class JobGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobGroup
-        fields = ["id", "name", "image", "is_finished", "bundle_groups"]
+        fields = ["id", "name", "is_finished", "bundle_groups"]
 
 
 # class RefStyleSerializer(serializers.ModelSerializer):

@@ -21,7 +21,7 @@ def isSeasonValid(season):
 
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True)
-    image = models.ImageField(upload_to="job-icon/")
+    # image = models.ImageField(upload_to="job-icon/")
     is_finished = models.BooleanField(default=False)
 
     def __str__(self):

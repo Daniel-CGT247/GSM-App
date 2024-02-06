@@ -79,9 +79,19 @@ class OperationListViewSet(ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.request.method in ["POST", "DELETE"]:
-            return OperationListItemSerializer
+        if self.request.method == "POST":
+            return AddOperationItemSerializer
+        elif self.request.method == "PATCH":
+            return UpdateOperationItemSerializer
         return OperationListDetailSerializer
+
+
+class OperationCodeView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OperationCodeSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["operation"]
+    queryset = OperationCode.objects.all()
 
 
 class ElementLibViewSet(ModelViewSet):

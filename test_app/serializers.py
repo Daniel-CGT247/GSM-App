@@ -74,19 +74,35 @@ class OperationLibSerializer(serializers.ModelSerializer):
             "id",
             "bundle_group",
             "name",
-            "operation_code",
             "note",
         ]
 
 
-class OperationListItemSerializer(serializers.ModelSerializer):
+class OperationCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OperationCode
+        fields = ["id", "name", "operation_code"]
+
+
+class AddOperationItemSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     list = serializers.PrimaryKeyRelatedField(queryset=YourList.objects.all())
     operations = serializers.PrimaryKeyRelatedField(queryset=OperationLib.objects.all())
 
     class Meta:
         model = OperationListItem
-        fields = ["id", "list", "operations", "last_update"]
+        fields = ["id", "list", "operations"]
+
+
+class UpdateOperationItemSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    list = serializers.PrimaryKeyRelatedField(queryset=YourList.objects.all())
+    operations = serializers.PrimaryKeyRelatedField(queryset=OperationLib.objects.all())
+    expanding_field = OperationCode()
+
+    class Meta:
+        model = OperationListItem
+        fields = ["id", "list", "operations", "expanding_field"]
 
 
 class OptionSerializer(serializers.ModelSerializer):
@@ -178,6 +194,7 @@ class OperationListDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     list = serializers.PrimaryKeyRelatedField(queryset=YourList.objects.all())
     operations = OperationLibSerializer()
+    expanding_field = OperationCodeSerializer()
     element_count = serializers.SerializerMethodField("get_element_items_count")
     total_sam = serializers.SerializerMethodField("get_total_sam")
 
@@ -187,6 +204,7 @@ class OperationListDetailSerializer(serializers.ModelSerializer):
             "id",
             "list",
             "operations",
+            "expanding_field",
             "element_count",
             "total_sam",
             "last_update",

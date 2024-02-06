@@ -85,6 +85,13 @@ class OperationListViewSet(ModelViewSet):
             return UpdateOperationItemSerializer
         return OperationListDetailSerializer
 
+    def destroy(self, request, *args, **kwargs):
+    try:
+        return super(OperationListViewSet, self).destroy(request, *args, **kwargs)
+    except ProtectedError:
+        return Response({'error': 'Please delete all related elements before deleting this specific operation.'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
 
 class OperationCodeView(ModelViewSet):
     permission_classes = [IsAuthenticated]

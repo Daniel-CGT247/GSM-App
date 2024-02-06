@@ -104,7 +104,7 @@ class OperationCode(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
+    
 
 class OperationListItem(models.Model):
     list = models.ForeignKey(YourList, on_delete=models.PROTECT)

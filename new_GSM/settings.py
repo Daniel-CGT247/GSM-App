@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-o!rx1=snmqi1fr0&lav@%%i1tnl06)tfr2r#e!f@8zs9xg^nyh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [".vercel.app", ".now.sh"]
+ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1"]
 
 
 # Application definition
@@ -109,13 +109,19 @@ DATABASES = {
         "HOST": "aws-0-us-west-1.pooler.supabase.com",
         "PORT": 6543,
         "DISABLE_SERVER_SIDE_CURSORS": True,
-        # "NAME": os.environ.get("DB_NAME"),
-        # "USER": os.environ.get("DB_USER"),
-        # "PASSWORD": os.environ.get("DB_PASSWORD"),
-        # "HOST": os.environ.get("DB_HOST"),
-        # "PORT": os.environ.get("DB_PORT"),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "GSM Local",
+#         "USER": "postgres",
+#         "PASSWORD": "qweqweqwe",
+#         "HOST": "localhost",
+#         "PORT": 5433,
+#     }
+# }
 
 
 # Password validation

@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-o!rx1=snmqi1fr0&lav@%%i1tnl06)tfr2r#e!f@8zs9xg^nyh"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1"]
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "djoser",
+    "django_auth_adfs",
     "corsheaders",
     "adminsortable2",
     "test_app.apps.TestAppConfig",
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_auth_adfs.middleware.LoginRequiredMiddleware",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -170,6 +172,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "django_auth_adfs.rest_framework.AdfsAccessTokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
@@ -185,3 +188,44 @@ DJOSER = {
         "current_user": "core.serializers.UserSerializer",
     }
 }
+
+AUTHENTICATION_BACKENDS = ("django_auth_adfs.backend.AdfsAuthCodeBackend",)
+
+# AUTH_ADFS = {
+#     "SERVER": "adfs.yourcompany.com",
+#     "CLIENT_ID": "your-configured-client-id",
+#     "RELYING_PARTY_ID": "your-adfs-RPT-name",
+#     # Make sure to read the documentation about the AUDIENCE setting
+#     # when you configured the identifier as a URL!
+#     "AUDIENCE": "microsoft:identityserver:your-RelyingPartyTrust-identifier",
+#     "CA_BUNDLE": "/path/to/ca-bundle.pem",
+#     "CLAIM_MAPPING": {
+#         "first_name": "given_name",
+#         "last_name": "family_name",
+#         "email": "email",
+#     },
+# }
+client_id = "43877c69-35ac-40ba-8b81-1d75c3aeff81"
+client_secret = "Qqn8Q~hq4VQdUc~zo4AJQdHhZg8JUOZOhQClecsR"
+tenant_id = "e500d90a-f722-4c6b-a5b8-6fda28cef811"
+
+AUTH_ADFS = {
+    "AUDIENCE": client_id,
+    "CLIENT_ID": client_id,
+    "CLIENT_SECRET": client_secret,
+    "CLAIM_MAPPING": {
+        "first_name": "given_name",
+        "last_name": "family_name",
+        "email": "upn",
+    },
+    "GROUPS_CLAIM": "roles",
+    "MIRROR_GROUPS": True,
+    "USERNAME_CLAIM": "upn",
+    "TENANT_ID": tenant_id,
+    "RELYING_PARTY_ID": client_id,
+}
+
+
+LOGIN_URL = "django_auth_adfs:login"
+LOGIN_REDIRECT_URL = "/"
+CUSTOM_FAILED_RESPONSE_VIEW = "dot.path.to.custom.views.login_failed"

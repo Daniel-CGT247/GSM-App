@@ -1,6 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
-import os  # Importing the os module
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-o!rx1=snmqi1fr0&lav@%%i1tnl06)tfr2r#e!f@8zs9xg^nyh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1"]
+ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -173,46 +173,29 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "django_auth_adfs.rest_framework.AdfsAccessTokenAuthentication",
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
 }
 
-SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("JWT",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-}
+# SIMPLE_JWT = {
+#     "AUTH_HEADER_TYPES": ("JWT",),
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+# }
 
-DJOSER = {
-    "SERIALIZERS": {
-        "user_create": "core.serializers.UserCreateSerializer",
-        "current_user": "core.serializers.UserSerializer",
-    }
-}
+# DJOSER = {
+#     "SERIALIZERS": {
+#         "user_create": "core.serializers.UserCreateSerializer",
+#         "current_user": "core.serializers.UserSerializer",
+#     }
+# }
 
 AUTHENTICATION_BACKENDS = ("django_auth_adfs.backend.AdfsAuthCodeBackend",)
 
-# AUTH_ADFS = {
-#     "SERVER": "adfs.yourcompany.com",
-#     "CLIENT_ID": "your-configured-client-id",
-#     "RELYING_PARTY_ID": "your-adfs-RPT-name",
-#     # Make sure to read the documentation about the AUDIENCE setting
-#     # when you configured the identifier as a URL!
-#     "AUDIENCE": "microsoft:identityserver:your-RelyingPartyTrust-identifier",
-#     "CA_BUNDLE": "/path/to/ca-bundle.pem",
-#     "CLAIM_MAPPING": {
-#         "first_name": "given_name",
-#         "last_name": "family_name",
-#         "email": "email",
-#     },
-# }
-client_id = "43877c69-35ac-40ba-8b81-1d75c3aeff81"
-client_secret = "Qqn8Q~hq4VQdUc~zo4AJQdHhZg8JUOZOhQClecsR"
-tenant_id = "e500d90a-f722-4c6b-a5b8-6fda28cef811"
-
 AUTH_ADFS = {
-    "AUDIENCE": client_id,
-    "CLIENT_ID": client_id,
-    "CLIENT_SECRET": client_secret,
+    "AUDIENCE": os.getenv("client_id"),
+    "CLIENT_ID": os.getenv("client_id"),
+    "CLIENT_SECRET": os.getenv("client_secret"),
     "CLAIM_MAPPING": {
         "first_name": "given_name",
         "last_name": "family_name",
@@ -221,8 +204,11 @@ AUTH_ADFS = {
     "GROUPS_CLAIM": "roles",
     "MIRROR_GROUPS": True,
     "USERNAME_CLAIM": "upn",
-    "TENANT_ID": tenant_id,
-    "RELYING_PARTY_ID": client_id,
+    "TENANT_ID": os.getenv("tenant_id"),
+    "RELYING_PARTY_ID": os.getenv("client_id"),
+    "LOGIN_EXEMPT_URLS": [
+        "/",
+    ],
 }
 
 

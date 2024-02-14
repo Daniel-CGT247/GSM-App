@@ -6,8 +6,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("test_app.urls")),
-    # path("auth/", include("djoser.urls")),
-    # path("auth/", include("djoser.urls.jwt")),
     path("oauth2/", include("django_auth_adfs.urls")),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

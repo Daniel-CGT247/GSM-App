@@ -91,27 +91,17 @@ class Variables(models.Model):
 class OperationLib(models.Model):
     bundle_group = models.ForeignKey(BundleGroup, on_delete=models.PROTECT)
     name = models.CharField(max_length=200)
+    job_code = models.IntegerField()
     note = models.TextField(max_length=1500, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"
 
 
-class OperationCode(models.Model):
-    operation = models.ForeignKey(OperationLib, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, blank=True)
-    operation_code = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.name}"
-    
-
 class OperationListItem(models.Model):
     list = models.ForeignKey(YourList, on_delete=models.PROTECT)
     operations = models.ForeignKey(OperationLib, on_delete=models.PROTECT)
-    expanding_field = models.ForeignKey(
-        OperationCode, on_delete=models.PROTECT, null=True
-    )
+    expanding_name = models.CharField(max_length=500, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):

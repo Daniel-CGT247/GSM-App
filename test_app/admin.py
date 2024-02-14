@@ -100,7 +100,7 @@ class ElementInline(admin.TabularInline):
 
 @admin.register(OperationLib)
 class OperationLibAdmin(admin.ModelAdmin):
-    list_display = ["name", "bundle_group", "elements_count", "note"]
+    list_display = ["name", "job_code", "bundle_group", "elements_count", "note"]
     list_filter = ["bundle_group__name"]
     search_fields = ["name__istartswith"]
     list_per_page = 10
@@ -130,6 +130,7 @@ class OperationListItemAdmin(admin.ModelAdmin):
     list_display = [
         "list",
         "operations",
+        "expanding_name",
         "get_bundle_group",
         "elements_count",
         "get_user",
@@ -205,12 +206,6 @@ class TimeStudyAdmin(admin.ModelAdmin):
     @admin.display(description="Operation")
     def get_operation(self, timestudy):
         return timestudy.elements.operation.name
-
-
-@admin.register(OperationCode)
-class OperationCodeAdmin(admin.ModelAdmin):
-    list_display = ["name", "operation_code", "operation"]
-    autocomplete_fields = ["operation"]
 
 
 try:

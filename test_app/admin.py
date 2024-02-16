@@ -14,7 +14,7 @@ app = apps.get_app_config("test_app")
 class ElementLibAdmin(SortableAdminMixin, admin.ModelAdmin):
     autocomplete_fields = ["variables"]
     ordering = ["my_order"]
-    list_display = ["name", "operation", "get_variables"]
+    list_display = ["name", "get_variables"]
     search_fields = ["name__istartswith"]
     list_filter = ["operation__name"]
     autocomplete_fields = ["operation", "variables"]
@@ -91,11 +91,11 @@ class NewItemAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 
-class ElementInline(admin.TabularInline):
-    model = ElementLib
-    exclude = ["note", "my_order"]
-    autocomplete_fields = ["variables"]
-    extra = 0
+# class ElementInline(admin.TabularInline):
+#     model = ElementLib
+#     exclude = ["note", "my_order"]
+#     autocomplete_fields = ["variables"]
+#     extra = 0
 
 
 @admin.register(OperationLib)
@@ -105,7 +105,7 @@ class OperationLibAdmin(admin.ModelAdmin):
     search_fields = ["name__istartswith"]
     list_per_page = 10
     autocomplete_fields = ["bundle_group"]
-    inlines = [ElementInline]
+    # inlines = [ElementInline]
 
     @admin.display(ordering="elements_count")
     def elements_count(self, operationLib):

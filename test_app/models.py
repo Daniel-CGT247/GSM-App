@@ -110,7 +110,7 @@ class OperationListItem(models.Model):
 
 class ElementLib(models.Model):
     name = models.CharField(max_length=500, null=True)
-    operation = models.ForeignKey(OperationLib, on_delete=models.PROTECT)
+    operation = models.ManyToManyField(OperationLib)
     note = models.TextField(max_length=1500, null=True, blank=True)
     variables = models.ManyToManyField(Variables, blank=True)
     my_order = models.PositiveIntegerField(

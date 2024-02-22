@@ -3,6 +3,7 @@ from . import views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
+router.register("user", views.UserViewSet, basename="user")
 router.register("collection", views.CollectionViewSet, basename="collection")
 router.register("job_group", views.JobGroupViewSet)
 router.register("operation_lib", views.OperationLibViewSet, basename="operation_lib")

@@ -109,8 +109,8 @@ class OperationListItem(models.Model):
 
 
 class ElementLib(models.Model):
-    name = models.CharField(max_length=500, null=True)
-    operation = models.ForeignKey(OperationLib, on_delete=models.PROTECT)
+    name = models.CharField(max_length=500)
+    operation = models.ManyToManyField(OperationLib)
     note = models.TextField(max_length=1500, null=True, blank=True)
     variables = models.ManyToManyField(Variables, blank=True)
     my_order = models.PositiveIntegerField(
@@ -145,16 +145,3 @@ class TimeStudy(models.Model):
 
     def __str__(self):
         return f"{self.elements.name}"
-
-
-# class RefStyle(models.Model):
-#     name = models.CharField(max_length=200, unique=True)
-#     attribute = models.ManyToManyField(Option)
-
-#     def __str__(self):
-#         return self.name
-
-# class TimeStudyRef(models.Model):
-#     elements = models.ForeignKey(ElementLib, on_delete=models.PROTECT)
-#     refStyle = models.ForeignKey(RefStyle, on_delete=models.PROTECT)
-#     time = models.FloatField(null=True)

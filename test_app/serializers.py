@@ -2,6 +2,12 @@ from rest_framework import serializers
 from .models import *
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username"]
+
+
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewItem
@@ -59,12 +65,6 @@ class JobGroupSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "is_finished", "bundle_groups"]
 
 
-# class RefStyleSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = RefStyle
-#         fields = ["id", "name", "attribute"]
-
-
 class OperationLibSerializer(serializers.ModelSerializer):
     bundle_group = serializers.StringRelatedField()
 
@@ -81,8 +81,12 @@ class OperationLibSerializer(serializers.ModelSerializer):
 
 class AddOperationItemSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    list = serializers.PrimaryKeyRelatedField(queryset=YourList.objects.all())
-    operations = serializers.PrimaryKeyRelatedField(queryset=OperationLib.objects.all())
+    list = serializers.PrimaryKeyRelatedField(
+        queryset=YourList.objects.select_related("item").all()
+    )
+    operations = serializers.PrimaryKeyRelatedField(
+        queryset=OperationLib.objects.select_related("bundle_group").all()
+    )
 
     class Meta:
         model = OperationListItem
@@ -104,7 +108,7 @@ class VariableSerializer(serializers.ModelSerializer):
 
 
 class ElementLibSerializer(serializers.ModelSerializer):
-    operation = serializers.PrimaryKeyRelatedField(read_only=True)
+    operation = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
     variables = VariableSerializer(many=True)
 
     class Meta:
@@ -156,7 +160,7 @@ class ElementListItemSerializer(serializers.ModelSerializer):
 class AddElementListItemSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     listItem = serializers.PrimaryKeyRelatedField(
-        queryset=OperationListItem.objects.all()
+        queryset=OperationListItem.objects.select_related("list__item").all()
     )
     elements = serializers.PrimaryKeyRelatedField(queryset=ElementLib.objects.all())
     options = serializers.PrimaryKeyRelatedField(
@@ -176,7 +180,7 @@ class AddElementListItemSerializer(serializers.ModelSerializer):
 
 class OperationListDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    list = serializers.PrimaryKeyRelatedField(queryset=YourList.objects.all())
+    list = serializers.PrimaryKeyRelatedField(read_only=True)
     operations = OperationLibSerializer()
     element_count = serializers.SerializerMethodField("get_element_items_count")
     total_sam = serializers.SerializerMethodField("get_total_sam")

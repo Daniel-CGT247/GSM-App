@@ -14,7 +14,7 @@ app = apps.get_app_config("test_app")
 class ElementLibAdmin(SortableAdminMixin, admin.ModelAdmin):
     autocomplete_fields = ["variables"]
     ordering = ["my_order"]
-    list_display = ["name", "operation", "get_variables"]
+    list_display = ["name", "get_variables", "get_operation"]
     search_fields = ["name__istartswith"]
     list_filter = ["operation__name"]
     autocomplete_fields = ["operation", "variables"]
@@ -22,6 +22,10 @@ class ElementLibAdmin(SortableAdminMixin, admin.ModelAdmin):
     @admin.display(description="Variables")
     def get_variables(self, element):
         return " | ".join([variable.name for variable in element.variables.all()])
+
+    @admin.display(description="Operation")
+    def get_operation(self, element):
+        return " | ".join([operation.name for operation in element.operation.all()])
 
 
 class OperationInline(admin.TabularInline):
@@ -91,13 +95,6 @@ class NewItemAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 
-class ElementInline(admin.TabularInline):
-    model = ElementLib
-    exclude = ["note", "my_order"]
-    autocomplete_fields = ["variables"]
-    extra = 0
-
-
 @admin.register(OperationLib)
 class OperationLibAdmin(admin.ModelAdmin):
     list_display = ["name", "job_code", "bundle_group", "elements_count", "note"]
@@ -105,24 +102,10 @@ class OperationLibAdmin(admin.ModelAdmin):
     search_fields = ["name__istartswith"]
     list_per_page = 10
     autocomplete_fields = ["bundle_group"]
-    inlines = [ElementInline]
 
     @admin.display(ordering="elements_count")
-    def elements_count(self, operationLib):
-        url = (
-            reverse("admin:test_app_elementlib_changelist")
-            + "?"
-            + urlencode({"operation": str(operationLib.id)})
-        )
-        return format_html(
-            "<a href={}>{} elements</a>", url, operationLib.elements_count
-        )
-
-    @admin.display(description="Elements")
-    def get_queryset(self, request):
-        return (
-            super().get_queryset(request).annotate(elements_count=Count("elementlib"))
-        )
+    def elements_count(self, obj):
+        return f"{obj.elementlib_set.count()} elements"
 
 
 @admin.register(OperationListItem)

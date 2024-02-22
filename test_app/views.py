@@ -9,6 +9,14 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 
+class UserViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["username"]
+    serializer_class = UserSerializer
+
+
 class CollectionViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = YourListSerializer
@@ -35,46 +43,26 @@ class JobGroupViewSet(ModelViewSet):
 
 
 class OperationLibViewSet(ModelViewSet):
-    def get_queryset(self):
-        bundle_group = self.request.query_params.get("bundle_group")
-
-        if bundle_group:
-            return OperationLib.objects.select_related("bundle_group").filter(
-                bundle_group=bundle_group
-            )
-        return OperationLib.objects.select_related("bundle_group").all()
-
+    queryset = OperationLib.objects.select_related("bundle_group").all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["bundle_group_id"]
     serializer_class = OperationLibSerializer
 
 
 class OperationListViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["list_id", "operations__bundle_group"]
+    filterset_fields = ["list__item_id", "operations__bundle_group_id"]
 
     def get_queryset(self):
-        bundle_group = self.request.query_params.get("bundle_group")
-        listId = self.request.query_params.get("listId")
-
-        if bundle_group and listId:
-            return (
-                OperationListItem.objects.select_related("list__created_by")
-                .select_related("operations__bundle_group")
-                .prefetch_related("elementlistitem_set__options")
-                .prefetch_related(
-                    "elementlistitem_set__elements__timestudy_set__elements"
-                )
-                .filter(
-                    list=listId,
-                    operations__bundle_group=bundle_group,
-                )
-            )
-
         return (
-            OperationListItem.objects.select_related("list__created_by")
-            .select_related("operations__bundle_group")
-            .prefetch_related("elementlistitem_set__options")
-            .prefetch_related("elementlistitem_set__elements__timestudy_set__elements")
+            OperationListItem.objects.select_related(
+                "list__created_by", "list__item", "operations__bundle_group"
+            )
+            .prefetch_related(
+                "elementlistitem_set__options",
+                "elementlistitem_set__elements__timestudy_set__elements",
+            )
             .filter(list__created_by=self.request.user)
         )
 
@@ -85,48 +73,31 @@ class OperationListViewSet(ModelViewSet):
 
 
 class ElementLibViewSet(ModelViewSet):
-    def get_queryset(self):
-        operationId = self.request.query_params.get("operation_id")
-        if operationId:
-            return (
-                ElementLib.objects.select_related("operation__bundle_group")
-                .prefetch_related("variables__options")
-                .filter(operation=operationId)
-            )
-        return (
-            ElementLib.objects.select_related("operation__bundle_group")
-            .prefetch_related("variables__options")
-            .all()
-        )
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["operation"]
     serializer_class = ElementLibSerializer
+    queryset = ElementLib.objects.prefetch_related(
+        "operation__bundle_group", "variables__options"
+    ).all()
 
 
 class ElementListItemViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ["get", "post", "patch", "delete"]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["listItem_id"]
 
     def get_queryset(self):
-        operationList = self.request.query_params.get("operationList")
-
-        if operationList:
-            return (
-                ElementListItem.objects.select_related(
-                    "listItem__list__item",
-                    "listItem__operations",
-                    "elements__operation",
-                )
-                .prefetch_related("options")
-                .prefetch_related("elements__timestudy_set")
-                .filter(listItem=operationList)
-            )
-
         return (
             ElementListItem.objects.select_related(
-                "listItem__list__item", "listItem__operations", "elements__operation"
+                "listItem__list__item",
             )
-            .prefetch_related("options")
-            .prefetch_related("elements__timestudy_set")
+            .prefetch_related(
+                # "elements__timestudy_set",
+                "elements__operation",
+                "options",
+                # "listItem__operations",
+            )
             .filter(listItem__list__created_by=self.request.user)
         )
 
@@ -137,10 +108,14 @@ class ElementListItemViewSet(ModelViewSet):
 
 
 class TimeStudyViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["elements", "options"]
+
     queryset = (
         TimeStudy.objects.select_related("elements")
         .prefetch_related("options")
-        .select_related("elements__operation__bundle_group")
+        .prefetch_related("elements__operation__bundle_group")
         .all()
     )
     serializer_class = TimeStudySerializer

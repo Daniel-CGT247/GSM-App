@@ -156,6 +156,7 @@ class ElementListItemAdmin(admin.ModelAdmin):
         "elements__operation__name",
         "last_update",
     ]
+    autocomplete_fields = ["options"]
     list_per_page = 10
 
 

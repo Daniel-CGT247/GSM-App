@@ -125,7 +125,6 @@ class ElementSimpleSerializer(serializers.ModelSerializer):
 
 
 class ElementListItemSerializer(serializers.ModelSerializer):
-    listItem = serializers.StringRelatedField(read_only=True)
     elements = ElementSimpleSerializer()
     options = OptionSerializer(many=True)
     nmt = serializers.SerializerMethodField("get_nmt")
@@ -138,23 +137,16 @@ class ElementListItemSerializer(serializers.ModelSerializer):
         elements = obj.elements
         options = obj.options.all()
 
-        time_study_result = (
-            TimeStudy.objects.select_related("elements")
-            .prefetch_related("options")
-            .filter(elements=elements)
-        )
-
+        time_study_records = TimeStudy.objects.filter(elements=elements)
         matching_records = [
             record
-            for record in time_study_result
+            for record in time_study_records
             if set(record.options.all()) == set(options)
         ]
-
-        return (
-            (sum(record.time for record in matching_records) / len(matching_records))
-            if matching_records
-            else None
-        )
+        if matching_records:
+            return sum(record.time for record in matching_records) / len(
+                matching_records
+            )
 
 
 class AddElementListItemSerializer(serializers.ModelSerializer):

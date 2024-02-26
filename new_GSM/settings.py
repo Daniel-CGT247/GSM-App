@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-o!rx1=snmqi1fr0&lav@%%i1tnl06)tfr2r#e!f@8zs9xg^nyh"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # ALLOWED_HOSTS = [
 #     ".vercel.app",
 #     ".now.sh",
@@ -34,8 +34,8 @@ DEBUG = False
 #     "localhost",
 #     "login.microsoftonline.com",
 # ]
-ALLOWED_HOSTS = ["*"]
 
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -68,6 +68,18 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 ROOT_URLCONF = "new_GSM.urls"
 

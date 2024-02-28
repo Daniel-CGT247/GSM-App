@@ -35,6 +35,7 @@ class CollectionViewSet(ModelViewSet):
 class JobGroupViewSet(ModelViewSet):
     queryset = JobGroup.objects.prefetch_related("bundle_groups").all()
     serializer_class = JobGroupSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -47,6 +48,7 @@ class OperationLibViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["bundle_group_id"]
     serializer_class = OperationLibSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class OperationListViewSet(ModelViewSet):

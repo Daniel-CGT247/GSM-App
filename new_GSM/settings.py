@@ -32,10 +32,14 @@ DEBUG = True
 #     ".now.sh",
 #     "127.0.0.1",
 #     "localhost",
-#     "login.microsoftonline.com",
 # ]
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "login.microsoftonline.com",
+]
+
 
 # Application definition
 
@@ -56,9 +60,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -67,19 +71,7 @@ MIDDLEWARE = [
     "django_auth_adfs.middleware.LoginRequiredMiddleware",
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = "new_GSM.urls"
 
@@ -157,17 +149,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+AUTHENTICATION_BACKENDS = (
+    # "django_auth_adfs.backend.AdfsAuthCodeBackend",
+    "django_auth_adfs.backend.AdfsAccessTokenBackend",
+)
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "django_auth_adfs.rest_framework.AdfsAccessTokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
-AUTHENTICATION_BACKENDS = ("django_auth_adfs.backend.AdfsAuthCodeBackend",)
+# AD_URL = os.getenv("AD_URL")
 
 AUTH_ADFS = {
-    "AUDIENCE": os.getenv("client_id"),
+    "AUDIENCE": os.getenv("api_client_id"),
     "CLIENT_ID": os.getenv("client_id"),
     "CLIENT_SECRET": os.getenv("client_secret"),
     "CLAIM_MAPPING": {
@@ -179,16 +178,14 @@ AUTH_ADFS = {
     "MIRROR_GROUPS": True,
     "USERNAME_CLAIM": "upn",
     "TENANT_ID": os.getenv("tenant_id"),
-    "RELYING_PARTY_ID": os.getenv("client_id"),
-    "LOGIN_EXEMPT_URLS": [
-        "/",
-    ],
+    "RELYING_PARTY_ID": os.getenv("api_client_id"),
+    "LOGIN_EXEMPT_URLS": [r"^$", r"^admin", r"^api"],
 }
 
 
-LOGIN_URL = "django_auth_adfs:login"
-LOGIN_REDIRECT_URL = "/"
-CUSTOM_FAILED_RESPONSE_VIEW = "dot.path.to.custom.views.login_failed"
+# LOGIN_URL = "django_auth_adfs:login"
+# LOGIN_REDIRECT_URL = "/"
+# CUSTOM_FAILED_RESPONSE_VIEW = "dot.path.to.custom.views.login_failed"
 
 
 # from datetime import timedelta

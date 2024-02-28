@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("test_app.urls")),
+    path("api/", include("test_app.urls")),
     path("oauth2/", include("django_auth_adfs.urls")),
     # path("__debug__/", include("debug_toolbar.urls")),
     # path("auth/", include("djoser.urls")),

@@ -22,7 +22,7 @@ def isSeasonValid(season):
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True)
     # image = models.ImageField(upload_to="job-icon/")
-    is_finished = models.BooleanField(default=False)
+    # is_finished = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -69,6 +69,14 @@ class YourList(models.Model):
         return f"{self.item.name}"
 
 
+class JobStatus(models.Model):
+    list = models.ForeignKey(
+        YourList, related_name="job_status", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+
+
 class Option(models.Model):
     name = models.CharField(max_length=200, null=True)
 
@@ -101,7 +109,9 @@ class OperationLib(models.Model):
 class OperationListItem(models.Model):
     list = models.ForeignKey(YourList, on_delete=models.PROTECT)
     operations = models.ForeignKey(OperationLib, on_delete=models.PROTECT)
-    expanding_name = models.CharField(max_length=500, null=True, blank=True)
+    expanding_name = models.CharField(
+        max_length=500, null=True, blank=True, default="N/A"
+    )
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):

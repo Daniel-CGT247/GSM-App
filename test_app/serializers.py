@@ -14,6 +14,12 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "season", "image", "proto"]
 
 
+class JobStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobStatus
+        fields = ["id", "name", "status"]
+
+
 class YourListSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
     created_by = serializers.StringRelatedField()
@@ -21,7 +27,13 @@ class YourListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = YourList
-        fields = ["id", "item", "complete", "created_by", "last_update"]
+        fields = [
+            "id",
+            "item",
+            "complete",
+            "created_by",
+            "last_update",
+        ]
 
     def get_last_update(self, your_list):
         return self.format_timestamp(your_list.last_update)
@@ -62,7 +74,7 @@ class JobGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobGroup
-        fields = ["id", "name", "is_finished", "bundle_groups"]
+        fields = ["id", "name", "bundle_groups"]
 
 
 class OperationLibSerializer(serializers.ModelSerializer):

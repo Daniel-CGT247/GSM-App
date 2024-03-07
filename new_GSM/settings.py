@@ -103,6 +103,17 @@ DATABASES = {
         "PORT": 6543,
         "DISABLE_SERVER_SIDE_CURSORS": True,
     }
+    # "default": {
+    #     "ENGINE": "mssql",
+    #     "NAME": "gsm",
+    #     "USER": "gsmadmin",
+    #     "PASSWORD": "KMUXoWwugdQ8snnZHNDRrrAcE",
+    #     "HOST": "sql-azr-gsm-dev.database.windows.net",
+    #     "PORT": "1433",
+    #     "OPTIONS": {
+    #         "driver": "ODBC Driver 17 for SQL Server",
+    #     },
+    # },
 }
 
 # Password validation
@@ -153,6 +164,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTHENTICATION_BACKENDS = (
     # "django_auth_adfs.backend.AdfsAuthCodeBackend",
     "django_auth_adfs.backend.AdfsAccessTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
 )
 
 REST_FRAMEWORK = {
@@ -184,7 +196,7 @@ AUTH_ADFS = {
 
 
 # LOGIN_URL = "django_auth_adfs:login"
-# LOGIN_REDIRECT_URL = "/"
+# LOGIN_REDIRECT_URL = "admin/"
 # CUSTOM_FAILED_RESPONSE_VIEW = "dot.path.to.custom.views.login_failed"
 
 
@@ -300,6 +312,19 @@ AUTH_ADFS = {
 #         "HOST": "aws-0-us-west-1.pooler.supabase.com",
 #         "PORT": 6543,
 #         "DISABLE_SERVER_SIDE_CURSORS": True,
+
+
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "postgres",
+#         "USER": "postgres.lyuqhgdwngpcvdalryel",
+#         "PASSWORD": "GSM_CGT_247",
+#         "HOST": "aws-0-us-west-1.pooler.supabase.com",
+#         "PORT": 6543,
+#         "DISABLE_SERVER_SIDE_CURSORS": True,
+#     }
+# }
+
 #     }
 # }
 

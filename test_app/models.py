@@ -20,7 +20,7 @@ def isSeasonValid(season):
 
 
 class JobGroup(models.Model):
-    name = models.CharField(max_length=200, null=True)
+    name = models.CharField(max_length=200, null=True, unique=True)
     # image = models.ImageField(upload_to="job-icon/")
     # is_finished = models.BooleanField(default=False)
 
@@ -29,9 +29,12 @@ class JobGroup(models.Model):
 
 
 class BundleGroup(models.Model):
-    name = models.CharField(max_length=200, null=True)
+    name = models.CharField(max_length=200, null=True, unique=True)
     job_group = models.ForeignKey(
-        JobGroup, on_delete=models.PROTECT, related_name="bundle_groups"
+        JobGroup,
+        on_delete=models.PROTECT,
+        related_name="bundle_groups",
+        to_field="name",
     )
 
     def __str__(self):
@@ -78,7 +81,7 @@ class JobStatus(models.Model):
 
 
 class Option(models.Model):
-    name = models.CharField(max_length=200, null=True)
+    name = models.CharField(max_length=200, null=True, unique=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -97,8 +100,10 @@ class Variables(models.Model):
 
 
 class OperationLib(models.Model):
-    bundle_group = models.ForeignKey(BundleGroup, on_delete=models.PROTECT)
-    name = models.CharField(max_length=200)
+    bundle_group = models.ForeignKey(
+        BundleGroup, on_delete=models.PROTECT, to_field="name"
+    )
+    name = models.CharField(max_length=200, unique=True)
     job_code = models.IntegerField()
     note = models.TextField(max_length=1500, null=True, blank=True)
 
@@ -108,7 +113,9 @@ class OperationLib(models.Model):
 
 class OperationListItem(models.Model):
     list = models.ForeignKey(YourList, on_delete=models.PROTECT)
-    operations = models.ForeignKey(OperationLib, on_delete=models.PROTECT)
+    operations = models.ForeignKey(
+        OperationLib, on_delete=models.PROTECT, to_field="name"
+    )
     expanding_name = models.CharField(
         max_length=500, null=True, blank=True, default="N/A"
     )
@@ -119,7 +126,7 @@ class OperationListItem(models.Model):
 
 
 class ElementLib(models.Model):
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=500, unique=True)
     operation = models.ManyToManyField(OperationLib)
     note = models.TextField(max_length=1500, null=True, blank=True)
     variables = models.ManyToManyField(Variables, blank=True)
@@ -149,7 +156,7 @@ class ElementListItem(models.Model):
 
 
 class TimeStudy(models.Model):
-    elements = models.ForeignKey(ElementLib, on_delete=models.CASCADE)
+    elements = models.ForeignKey(ElementLib, on_delete=models.CASCADE, to_field="name")
     options = models.ManyToManyField(Option, blank=True)
     time = models.FloatField()
 

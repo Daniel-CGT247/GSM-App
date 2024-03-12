@@ -198,6 +198,7 @@ try:
             | (model_name == "elementlistitem_options")
             | (model_name == "elementlib_variables")
             | (model_name == "variables_options")
+            | (model_name == "elementlib_operation")
         ):
             admin.site.register(model)
 except:

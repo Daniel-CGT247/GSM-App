@@ -52,6 +52,21 @@ class YourListSerializer(serializers.ModelSerializer):
         )
         return your_list_instance
 
+    def update(self, instance, validated_data):
+        item_data = validated_data.pop('item', None) 
+        item = instance.item
+
+        if item_data:
+            for field, value in item_data.items():
+                setattr(item, field, value)
+            item.save()
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
+
+        return instance
+
 
 class BundleGroupSerializer(serializers.ModelSerializer):
     operations_count = serializers.SerializerMethodField("get_operations_count")

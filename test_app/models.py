@@ -165,6 +165,3 @@ class SpecialMachineInstuction(models.Model):
     image = models.ImageField(upload_to="specialMachineInstruction/")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-a

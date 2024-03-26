@@ -108,63 +108,6 @@ class ElementListItemViewSet(ModelViewSet):
         return ElementListItemSerializer
 
 
-# def update_nmt(self, instance):
-#     serializer = self.get_serializer(instance)
-#     nmt = serializer.data.get("nmt")
-#     instance.nmt = nmt
-#     instance.save()
-
-# def perform_update(self, serializer):
-#     instance = serializer.save()
-#     self.update_nmt(instance)
-
-
-# class ElementListItemViewSet(ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_fields = ["listItem_id"]
-
-#     def get_queryset(self):
-#         queryset = (
-#             ElementListItem.objects.select_related(
-#                 "listItem__list__item",
-#             )
-#             .prefetch_related(
-#                 "elements__operation",
-#                 "options",
-#             )
-#             .filter(listItem__list__created_by=self.request.user)
-#         )
-
-#         # # If filtering by listItem_id, apply the filter
-#         listItem_id = self.request.query_params.get("listItem_id")
-#         if listItem_id:
-#             queryset = queryset.filter(listItem=listItem_id)
-
-#         # Fetch TimeStudy records and filter by elements
-#         element_ids = queryset.values_list("elements", flat=True)
-#         time_study_records = (
-#             TimeStudy.objects.select_related("elements")
-#             .prefetch_related("options")
-#             .filter(elements__id__in=element_ids)
-#         )
-
-#         # Attach the filtered TimeStudy records to the queryset
-#         for item in queryset:
-#             item.time_study_records = [
-#                 record
-#                 for record in time_study_records
-#                 if record.elements_id == item.elements_id
-#             ]
-
-#         return queryset
-
-#     def get_serializer_class(self):
-#         if self.request.method in ["POST", "PATCH"]:
-#             return AddElementListItemSerializer
-#         return ElementListItemSerializer
-
-
 class TimeStudyViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
@@ -177,3 +120,10 @@ class TimeStudyViewSet(ModelViewSet):
         .all()
     )
     serializer_class = TimeStudySerializer
+
+
+class SpecialMachineViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = SpecialMachineInstuction.objects.all()
+    filterset_fields = ["job"]
+    serializer_class = SpecialMachineInstuctionSerializer

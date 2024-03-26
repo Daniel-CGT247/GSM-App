@@ -21,7 +21,7 @@ def isSeasonValid(season):
 
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True, unique=True)
-    # image = models.ImageField(upload_to="job-icon/")
+    image = models.ImageField(upload_to="jobCover/")
     # is_finished = models.BooleanField(default=False)
 
     def __str__(self):
@@ -34,7 +34,6 @@ class BundleGroup(models.Model):
         JobGroup,
         on_delete=models.PROTECT,
         related_name="bundle_groups",
-        to_field="name",
     )
 
     def __str__(self):
@@ -72,14 +71,6 @@ class YourList(models.Model):
         return f"{self.item.name}"
 
 
-class JobStatus(models.Model):
-    list = models.ForeignKey(
-        YourList, related_name="job_status", on_delete=models.CASCADE
-    )
-    name = models.CharField(max_length=100)
-    status = models.CharField(max_length=100)
-
-
 class Option(models.Model):
     name = models.CharField(max_length=200, null=True, unique=True)
 
@@ -101,7 +92,8 @@ class Variables(models.Model):
 
 class OperationLib(models.Model):
     bundle_group = models.ForeignKey(
-        BundleGroup, on_delete=models.PROTECT, to_field="name"
+        BundleGroup,
+        on_delete=models.PROTECT,
     )
     name = models.CharField(max_length=200, unique=True)
     job_code = models.IntegerField()
@@ -114,7 +106,8 @@ class OperationLib(models.Model):
 class OperationListItem(models.Model):
     list = models.ForeignKey(YourList, on_delete=models.PROTECT)
     operations = models.ForeignKey(
-        OperationLib, on_delete=models.PROTECT, to_field="name"
+        OperationLib,
+        on_delete=models.PROTECT,
     )
     expanding_name = models.CharField(
         max_length=500, null=True, blank=True, default="N/A"
@@ -156,9 +149,22 @@ class ElementListItem(models.Model):
 
 
 class TimeStudy(models.Model):
-    elements = models.ForeignKey(ElementLib, on_delete=models.CASCADE, to_field="name")
+    elements = models.ForeignKey(
+        ElementLib,
+        on_delete=models.CASCADE,
+    )
     options = models.ManyToManyField(Option, blank=True)
     time = models.FloatField()
 
     def __str__(self):
         return f"{self.elements.name}"
+
+
+class SpecialMachineInstuction(models.Model):
+    job = models.CharField(max_length=200, null=True)
+    image = models.ImageField(upload_to="specialMachineInstruction/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+a

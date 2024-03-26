@@ -15,17 +15,3 @@ def update_your_list_last_update(sender, instance, **kwargs):
 def update_your_list_last_update(sender, instance, **kwargs):
     instance.list.last_update = instance.last_update
     instance.list.save()
-
-
-@receiver(post_save, sender=YourList)
-def create_job_group(sender, instance, created, **kwargs):
-    if created:
-        JobStatus.objects.bulk_create(
-            [
-                JobStatus(list=instance, name="Bulk", status="Not started"),
-                JobStatus(list=instance, name="Bundling", status="Not started"),
-                JobStatus(list=instance, name="Sewing", status="Not started"),
-                JobStatus(list=instance, name="Donw-Filling", status="Not started"),
-                JobStatus(list=instance, name="Finishing", status="Not started"),
-            ]
-        )

@@ -14,12 +14,6 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "season", "image", "proto"]
 
 
-class JobStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = JobStatus
-        fields = ["id", "name", "status"]
-
-
 class YourListSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
     created_by = serializers.StringRelatedField()
@@ -52,6 +46,21 @@ class YourListSerializer(serializers.ModelSerializer):
         )
         return your_list_instance
 
+    def update(self, instance, validated_data):
+        item_data = validated_data.pop("item", None)
+        item = instance.item
+
+        if item_data:
+            for field, value in item_data.items():
+                setattr(item, field, value)
+            item.save()
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
+
+        return instance
+
 
 class BundleGroupSerializer(serializers.ModelSerializer):
     operations_count = serializers.SerializerMethodField("get_operations_count")
@@ -74,7 +83,7 @@ class JobGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobGroup
-        fields = ["id", "name", "bundle_groups"]
+        fields = ["id", "name", "image", "bundle_groups"]
 
 
 class OperationLibSerializer(serializers.ModelSerializer):
@@ -212,6 +221,18 @@ class OperationListDetailSerializer(serializers.ModelSerializer):
         return sum(nmt_values)
 
 
+class ElementSimpleSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    var = serializers.SerializerMethodField("get_var")
+
+    class Meta:
+        model = ElementLib
+        fields = ["id", "name", "var"]
+
+    def get_var(self, obj):
+        return obj.variables.values_list("name", flat=True)
+
+
 class TimeStudySerializer(serializers.ModelSerializer):
     elements = ElementSimpleSerializer()
     options = OptionSerializer(many=True)
@@ -219,3 +240,9 @@ class TimeStudySerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeStudy
         fields = ["id", "elements", "options", "time"]
+
+
+class SpecialMachineInstuctionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpecialMachineInstuction
+        fields = ["id", "job", "image", "created_at", "updated_at"]

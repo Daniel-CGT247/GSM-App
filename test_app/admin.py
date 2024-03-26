@@ -191,6 +191,13 @@ class TimeStudyAdmin(admin.ModelAdmin):
         return timestudy.elements.operation.name
 
 
+@admin.register(SpecialMachineInstuction)
+class SpecialMachineInstuctionAdmin(admin.ModelAdmin):
+    list_display = ["job", "image", "created_at", "updated_at"]
+    search_fields = ["name__istartswith"]
+    list_per_page = 10
+
+
 try:
     for model_name, model in app.models.items():
         if (
@@ -203,4 +210,3 @@ try:
             admin.site.register(model)
 except:
     print("Already registered: ", model_name)
-#

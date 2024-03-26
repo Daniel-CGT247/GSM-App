@@ -94,26 +94,26 @@ TEMPLATES = [
 WSGI_APPLICATION = "new_GSM.wsgi.application"
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "postgres",
-        "USER": "postgres.lyuqhgdwngpcvdalryel",
-        "PASSWORD": "GSM_CGT_247",
-        "HOST": "aws-0-us-west-1.pooler.supabase.com",
-        "PORT": 6543,
-        "DISABLE_SERVER_SIDE_CURSORS": True,
-    }
     # "default": {
-    #     "ENGINE": "mssql",
-    #     "NAME": "gsm",
-    #     "USER": "gsmadmin",
-    #     "PASSWORD": "KMUXoWwugdQ8snnZHNDRrrAcE",
-    #     "HOST": "sql-azr-gsm-dev.database.windows.net",
-    #     "PORT": "1433",
-    #     "OPTIONS": {
-    #         "driver": "ODBC Driver 17 for SQL Server",
-    #     },
-    # },
+    #     "ENGINE": "django.db.backends.postgresql_psycopg2",
+    #     "NAME": "postgres",
+    #     "USER": "postgres.lyuqhgdwngpcvdalryel",
+    #     "PASSWORD": "GSM_CGT_247",
+    #     "HOST": "aws-0-us-west-1.pooler.supabase.com",
+    #     "PORT": 6543,
+    #     "DISABLE_SERVER_SIDE_CURSORS": True,
+    # }
+    "default": {
+        "ENGINE": "mssql",
+        "NAME": "gsm",
+        "USER": "gsmadmin",
+        "PASSWORD": "KMUXoWwugdQ8snnZHNDRrrAcE",
+        "HOST": "sql-azr-gsm-dev.database.windows.net",
+        "PORT": "1433",
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+    },
 }
 
 # Password validation

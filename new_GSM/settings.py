@@ -191,7 +191,7 @@ AUTH_ADFS = {
     "USERNAME_CLAIM": "upn",
     "TENANT_ID": os.getenv("tenant_id"),
     "RELYING_PARTY_ID": os.getenv("api_client_id"),
-    "LOGIN_EXEMPT_URLS": [r"^$", r"^admin", r"^api"],
+    "LOGIN_EXEMPT_URLS": [r"^$", r"^admin", r"^api", r".*\.(jpg|jpeg|png|gif)$"],
 }
 
 

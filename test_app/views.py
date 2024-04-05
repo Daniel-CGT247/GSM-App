@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .models import *
 from .serializers import *
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 
 
@@ -127,3 +127,9 @@ class SpecialMachineViewSet(ModelViewSet):
     queryset = SpecialMachineInstuction.objects.all()
     filterset_fields = ["job"]
     serializer_class = SpecialMachineInstuctionSerializer
+
+
+class OverviewViewSet(ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = YourList.objects.select_related("item").order_by("-last_update")
+    serializer_class = YourListSerializer

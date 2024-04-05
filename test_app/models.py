@@ -4,6 +4,15 @@ from django.core.validators import *
 from django.core.exceptions import ValidationError
 import re
 
+STAGE_CHOICES = (
+    ("Sketch", "Sketch"),
+    ("P1", "P1"),
+    ("P2", "P2"),
+    ("P3", "P3"),
+    ("Reference Sample", "Reference Sample"),
+    ("Size Set", "Size Set"),
+)
+
 
 def isItemNameValid(itemName):
     pattern = r"^\d{4}[A-Z]{1,7}$"
@@ -49,7 +58,7 @@ class NewItem(models.Model):
     )
     description = models.CharField(max_length=250, null=True)
     season = models.CharField(max_length=250, null=True, validators=[isSeasonValid])
-    proto = models.IntegerField()
+    proto = models.CharField(max_length=250, null=False, choices=STAGE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to="newItems/", null=True, blank=True)

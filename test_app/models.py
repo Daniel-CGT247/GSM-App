@@ -28,6 +28,11 @@ def isSeasonValid(season):
         raise ValidationError("Season must start with SP/FW followed by year (YYYY)")
 
 
+class UserExtend(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    department = models.CharField(max_length=100)
+
+
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True, unique=True)
     image = models.ImageField(upload_to="jobCover/")
@@ -73,7 +78,7 @@ class NewItem(models.Model):
 class YourList(models.Model):
     item = models.OneToOneField(NewItem, on_delete=models.CASCADE)
     complete = models.BooleanField(default=False)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    created_by = models.ForeignKey(UserExtend, on_delete=models.PROTECT)
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):

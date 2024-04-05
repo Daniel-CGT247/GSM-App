@@ -64,7 +64,7 @@ class YourListAdmin(admin.ModelAdmin):
     list_editable = ["complete"]
     list_per_page = 10
     search_fields = ["item__name__istartswith"]
-    list_filter = ["complete", "created_by__username", "last_update"]
+    list_filter = ["complete", "created_by__user__username", "last_update"]
 
     @admin.display(ordering="operations_count")
     def operations_count(self, yourList):
@@ -152,7 +152,7 @@ class ElementListItemAdmin(admin.ModelAdmin):
     list_display = ["listItem", "elements", "expanding_name"]
     list_editable = ["elements", "expanding_name"]
     list_filter = [
-        "listItem__list__created_by__username",
+        "listItem__list__created_by__user__username",
         "elements__operation__name",
         "last_update",
     ]
@@ -195,6 +195,13 @@ class TimeStudyAdmin(admin.ModelAdmin):
 class SpecialMachineInstuctionAdmin(admin.ModelAdmin):
     list_display = ["job", "image", "created_at", "updated_at"]
     search_fields = ["job__istartswith"]
+    list_per_page = 10
+
+
+@admin.register(UserExtend)
+class UserExtendAdmin(admin.ModelAdmin):
+    list_display = ["user", "department"]
+    search_fields = ["user__username__istartswith", "department__name__istartswith"]
     list_per_page = 10
 
 

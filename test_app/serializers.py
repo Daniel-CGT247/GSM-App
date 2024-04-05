@@ -5,7 +5,15 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = ["username"]
+
+
+class UserExtendSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = UserExtend
+        fields = ["user", "department"]
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -16,7 +24,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 class YourListSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
-    created_by = serializers.StringRelatedField()
+    created_by = UserExtendSerializer()
     last_update = serializers.SerializerMethodField("get_last_update")
 
     class Meta:

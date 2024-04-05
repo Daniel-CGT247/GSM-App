@@ -23,13 +23,13 @@ class CollectionViewSet(ModelViewSet):
 
     def get_queryset(self):
         return (
-            YourList.objects.select_related("item", "created_by")
-            .filter(created_by=self.request.user)
+            YourList.objects.select_related("item", "created_by__user")
+            .filter(created_by__user=self.request.user)
             .order_by("-last_update")
         )
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        serializer.save(created_by__user=self.request.user)
 
 
 class JobGroupViewSet(ModelViewSet):
@@ -59,13 +59,13 @@ class OperationListViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             OperationListItem.objects.select_related(
-                "list__created_by", "list__item", "operations__bundle_group"
+                "list__created_by__user", "list__item", "operations__bundle_group"
             )
             .prefetch_related(
                 "elementlistitem_set__options",
                 "elementlistitem_set__elements__timestudy_set__elements",
             )
-            .filter(list__created_by=self.request.user)
+            .filter(list__created_by__user=self.request.user)
         )
 
     def get_serializer_class(self):
@@ -99,7 +99,7 @@ class ElementListItemViewSet(ModelViewSet):
                 "options",
                 "listItem__operations",
             )
-            .filter(listItem__list__created_by=self.request.user)
+            .filter(listItem__list__created_by__user=self.request.user)
         )
 
     def get_serializer_class(self):
@@ -131,5 +131,7 @@ class SpecialMachineViewSet(ModelViewSet):
 
 class OverviewViewSet(ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = YourList.objects.select_related("item").order_by("-last_update")
+    queryset = YourList.objects.select_related("item", "created_by__user").order_by(
+        "-last_update"
+    )
     serializer_class = YourListSerializer

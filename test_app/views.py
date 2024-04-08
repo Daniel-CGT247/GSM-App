@@ -135,3 +135,32 @@ class OverviewViewSet(ReadOnlyModelViewSet):
         "-last_update"
     )
     serializer_class = YourListSerializer
+
+
+class OperationListOverviewViewSet(ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["list_id", "operations__bundle_group_id"]
+
+    queryset = OperationListItem.objects.select_related(
+        "list__created_by__user", "list__item", "operations__bundle_group"
+    ).prefetch_related(
+        "elementlistitem_set__options",
+        "elementlistitem_set__elements__timestudy_set__elements",
+    )
+    serializer_class = OperationListDetailSerializer
+
+
+class ElementListOverviewViewSet(ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["listItem_id"]
+
+    queryset = ElementListItem.objects.select_related(
+        "listItem__list__item",
+    ).prefetch_related(
+        "elements__operation",
+        "options",
+        "listItem__operations",
+    )
+    serializer_class = ElementListItemSerializer

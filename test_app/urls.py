@@ -13,4 +13,6 @@ router.register("element_list", views.ElementListItemViewSet, basename="element_
 router.register("time_study", views.TimeStudyViewSet)
 router.register("special_machine_instruction", views.SpecialMachineViewSet)
 router.register("overview", views.OverviewViewSet)
+router.register("operation_list_overview", views.OperationListOverviewViewSet)
+router.register("element_list_overview", views.ElementListOverviewViewSet)
 urlpatterns = router.urls

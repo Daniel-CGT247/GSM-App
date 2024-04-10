@@ -3,17 +3,11 @@ from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["username"]
-
-
-class UserExtendSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
 
     class Meta:
         model = UserExtend
-        fields = ["user", "department"]
+        fields = ["id", "user", "department"]
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -22,9 +16,26 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "season", "image", "proto"]
 
 
+class YourListPostSerializer(serializers.ModelSerializer):
+    item = CollectionSerializer()
+    created_by = serializers.PrimaryKeyRelatedField(queryset=UserExtend.objects.all())
+
+    class Meta:
+        model = YourList
+        fields = ["id", "item", "complete", "created_by"]
+
+    def create(self, validated_data):
+        item_data = validated_data.pop("item")
+        item_instance = NewItem.objects.create(**item_data)
+        your_list_instance = YourList.objects.create(
+            item=item_instance, **validated_data
+        )
+        return your_list_instance
+
+
 class YourListSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
-    created_by = UserExtendSerializer()
+    created_by = UserSerializer()
     last_update = serializers.SerializerMethodField("get_last_update")
 
     class Meta:
@@ -45,14 +56,6 @@ class YourListSerializer(serializers.ModelSerializer):
             formatted_time = timestamp.strftime("%m/%d/%Y %H:%M:%S")
             return formatted_time
         return None
-
-    def create(self, validated_data):
-        item_data = validated_data.pop("item")
-        item_instance = NewItem.objects.create(**item_data)
-        your_list_instance = YourList.objects.create(
-            item=item_instance, **validated_data
-        )
-        return your_list_instance
 
     def update(self, instance, validated_data):
         item_data = validated_data.pop("item", None)

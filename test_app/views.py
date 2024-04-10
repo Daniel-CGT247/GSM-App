@@ -1,19 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .models import *
 from .serializers import *
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 
 class UserViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = User.objects.all()
+    queryset = UserExtend.objects.select_related("user").all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["username"]
+    filterset_fields = ["user__username"]
     serializer_class = UserSerializer
 
 
@@ -21,15 +17,17 @@ class CollectionViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = YourListSerializer
 
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return YourListPostSerializer
+        return YourListSerializer
+
     def get_queryset(self):
         return (
             YourList.objects.select_related("item", "created_by__user")
             .filter(created_by__user=self.request.user)
             .order_by("-last_update")
         )
-
-    def perform_create(self, serializer):
-        serializer.save(created_by__user=self.request.user)
 
 
 class JobGroupViewSet(ModelViewSet):

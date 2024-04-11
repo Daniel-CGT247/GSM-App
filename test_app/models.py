@@ -36,7 +36,15 @@ class UserExtend(models.Model):
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True, unique=True)
     image = models.ImageField(upload_to="jobCover/")
-    # is_finished = models.BooleanField(default=False)
+    my_order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        ordering = ["my_order"]
+
 
     def __str__(self):
         return self.name

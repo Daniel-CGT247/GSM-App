@@ -19,10 +19,10 @@ class CollectionSerializer(serializers.ModelSerializer):
 class YourListPostSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
     created_by = serializers.PrimaryKeyRelatedField(queryset=UserExtend.objects.all())
-
+    
     class Meta:
         model = YourList
-        fields = ["id", "item", "complete", "created_by"]
+        fields = ["id", "item", "complete", "time", "created_by"]
 
     def create(self, validated_data):
         item_data = validated_data.pop("item")
@@ -31,12 +31,14 @@ class YourListPostSerializer(serializers.ModelSerializer):
             item=item_instance, **validated_data
         )
         return your_list_instance
+    
 
 
 class YourListSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
     created_by = UserSerializer()
     last_update = serializers.SerializerMethodField("get_last_update")
+    time = serializers.SerializerMethodField('get_total_sam')
 
     class Meta:
         model = YourList
@@ -44,9 +46,17 @@ class YourListSerializer(serializers.ModelSerializer):
             "id",
             "item",
             "complete",
+            "time",
             "created_by",
             "last_update",
         ]
+
+    def get_total_sam(self, instance):
+        sam_values = [
+            OperationListDetailSerializer(item).get_total_sam(item) or 0
+            for item in instance.operationlistitem_set.all()
+        ]
+        return sum(sam_values)
 
     def get_last_update(self, your_list):
         return self.format_timestamp(your_list.last_update)

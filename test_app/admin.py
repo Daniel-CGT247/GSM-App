@@ -14,7 +14,7 @@ app = apps.get_app_config("test_app")
 class ElementLibAdmin(SortableAdminMixin, admin.ModelAdmin):
     autocomplete_fields = ["variables"]
     ordering = ["my_order"]
-    list_display = ["name", "get_variables", "get_operation"]
+    list_display = ["name", "note", "get_variables", "get_operation"]
     search_fields = ["name__istartswith"]
     list_filter = ["operation__name"]
     autocomplete_fields = ["operation", "variables"]

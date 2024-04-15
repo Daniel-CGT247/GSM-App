@@ -36,7 +36,14 @@ class UserExtend(models.Model):
 class JobGroup(models.Model):
     name = models.CharField(max_length=200, null=True, unique=True)
     image = models.ImageField(upload_to="jobCover/")
-    # is_finished = models.BooleanField(default=False)
+    my_order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
+    )
+
+    class Meta:
+        ordering = ["my_order"]
 
     def __str__(self):
         return self.name
@@ -150,6 +157,18 @@ class ElementLib(models.Model):
         return f"{self.name}"
 
 
+class TimeStudy(models.Model):
+    elements = models.ForeignKey(
+        ElementLib,
+        on_delete=models.CASCADE,
+    )
+    options = models.ManyToManyField(Option, blank=True)
+    time = models.FloatField()
+
+    def __str__(self):
+        return f"{self.elements.name}"
+
+
 class ElementListItem(models.Model):
     listItem = models.ForeignKey(OperationListItem, on_delete=models.PROTECT)
     elements = models.ForeignKey(ElementLib, on_delete=models.CASCADE)
@@ -161,17 +180,21 @@ class ElementListItem(models.Model):
     def __str__(self):
         return f"{self.listItem.list.item.name} - {self.elements.name}"
 
+    # @property
+    # def get_nmt(self, obj):
+    #     elements = obj.elements
+    #     options = obj.options.all()
 
-class TimeStudy(models.Model):
-    elements = models.ForeignKey(
-        ElementLib,
-        on_delete=models.CASCADE,
-    )
-    options = models.ManyToManyField(Option, blank=True)
-    time = models.FloatField()
-
-    def __str__(self):
-        return f"{self.elements.name}"
+    #     time_study_records = TimeStudy.objects.filter(elements=elements)
+    #     matching_records = [
+    #         record
+    #         for record in time_study_records
+    #         if set(record.options_set) == set(options)
+    #     ]
+    #     if matching_records:
+    #         return sum(record.time for record in matching_records) / len(
+    #             matching_records
+    #         )
 
 
 class SpecialMachineInstuction(models.Model):

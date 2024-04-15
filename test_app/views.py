@@ -24,7 +24,7 @@ class CollectionViewSet(ModelViewSet):
 
     def get_queryset(self):
         return (
-            YourList.objects.select_related("item", "created_by__user")
+            YourList.objects.select_related("item", "created_by__user").prefetch_related("operationlistitem_set__elementlistitem_set__elements__timestudy_set")
             .filter(created_by__user=self.request.user)
             .order_by("-last_update")
         )

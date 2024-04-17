@@ -23,7 +23,7 @@ class YourListPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = YourList
-        fields = ["id", "item", "complete", "time", "created_by"]
+        fields = ["id", "item", "complete", "created_by"]
 
     def create(self, validated_data):
         item_data = validated_data.pop("item")

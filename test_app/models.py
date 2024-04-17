@@ -117,7 +117,7 @@ class OperationLib(models.Model):
         on_delete=models.PROTECT,
     )
     name = models.CharField(max_length=200, unique=True)
-    job_code = models.IntegerField()
+    job_code = models.IntegerField(unique=True)
     note = models.TextField(max_length=1500, null=True, blank=True)
 
     def __str__(self):
@@ -158,6 +158,12 @@ class ElementLib(models.Model):
 
 
 class TimeStudy(models.Model):
+    style = models.CharField(
+        max_length=200, validators=[isItemNameValid], null=True, blank=True
+    )
+    source = models.CharField(max_length=200, null=True, blank=True)
+    # units = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    # nmt_per_units = models.FloatField(null=True, blank=True)
     elements = models.ForeignKey(
         ElementLib,
         on_delete=models.CASCADE,
@@ -179,22 +185,6 @@ class ElementListItem(models.Model):
 
     def __str__(self):
         return f"{self.listItem.list.item.name} - {self.elements.name}"
-
-    # @property
-    # def get_nmt(self, obj):
-    #     elements = obj.elements
-    #     options = obj.options.all()
-
-    #     time_study_records = TimeStudy.objects.filter(elements=elements)
-    #     matching_records = [
-    #         record
-    #         for record in time_study_records
-    #         if set(record.options_set) == set(options)
-    #     ]
-    #     if matching_records:
-    #         return sum(record.time for record in matching_records) / len(
-    #             matching_records
-    #         )
 
 
 class SpecialMachineInstuction(models.Model):

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Count, Avg
 from .models import *
 
 
@@ -19,7 +20,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 class YourListPostSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
     created_by = serializers.PrimaryKeyRelatedField(queryset=UserExtend.objects.all())
-    
+
     class Meta:
         model = YourList
         fields = ["id", "item", "complete", "time", "created_by"]
@@ -31,14 +32,13 @@ class YourListPostSerializer(serializers.ModelSerializer):
             item=item_instance, **validated_data
         )
         return your_list_instance
-    
 
 
 class YourListSerializer(serializers.ModelSerializer):
     item = CollectionSerializer()
     created_by = UserSerializer()
     last_update = serializers.SerializerMethodField("get_last_update")
-    time = serializers.SerializerMethodField('get_total_sam')
+    time = serializers.SerializerMethodField("get_total_sam")
 
     class Meta:
         model = YourList
@@ -178,17 +178,31 @@ class ElementListItemSerializer(serializers.ModelSerializer):
     def get_nmt(self, obj):
         elements = obj.elements
         options = obj.options.all()
+        options_count = options.count()
 
-        time_study_records = TimeStudy.objects.filter(elements=elements)
-        matching_records = [
-            record
-            for record in time_study_records
-            if set(record.options.all()) == set(options)
-        ]
-        if matching_records:
-            return sum(record.time for record in matching_records) / len(
-                matching_records
-            )
+        if options_count == 0:
+            average_time = TimeStudy.objects.filter(elements=elements).aggregate(
+                average_time=Avg("time")
+            )["average_time"]
+            return average_time
+
+        matching_records = (
+            TimeStudy.objects.filter(elements=elements, options__in=options)
+            .annotate(options_count=Count("options"))
+            .filter(options_count=options_count)
+        )
+
+        for option in options:
+            matching_records = matching_records.filter(options=option)
+
+        if matching_records.exists():
+            average_time = matching_records.aggregate(average_time=Avg("time"))[
+                "average_time"
+            ]
+        else:
+            average_time = None
+
+        return average_time
 
 
 class AddElementListItemSerializer(serializers.ModelSerializer):

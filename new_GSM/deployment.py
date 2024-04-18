@@ -5,7 +5,7 @@ from .settings import BASE_DIR
 
 ALLOWED_HOSTS = [os.environ["WEBSITE_HOSTNAME"]]
 
-CSRF_TRUSTED_ORIGINS = [f"https://{os.environ["WEBSITE_HOSTNAME"]}"]
+CSRF_TRUSTED_ORIGINS = [f"https://{os.environ['WEBSITE_HOSTNAME']}"]
 
 DEBUG = False
 
@@ -24,7 +24,7 @@ MIDDLEWARE = [
     "django_auth_adfs.middleware.LoginRequiredMiddleware",
 ]
 
-# CORS_ALLOWED_ORIGINS 
+# CORS_ALLOWED_ORIGINS
 
 STORAGES = {
     "default": {
@@ -51,4 +51,4 @@ DATABASES = {
 }
 
 
-STATIC_ROOT = BASE_DIR/'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
